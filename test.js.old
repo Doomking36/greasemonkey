@@ -1,0 +1,48 @@
+// ==UserScript==
+// @name	Stop Redirect and Open in New Tab
+// version	0.1
+// @description	Prevents redirects and opens links in new tabs w/o permission
+// @match	*://*/*
+// @grant	none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Ask user for permission
+    const userConsent = confirm("Do you want to enable page-leaving prevention?");
+
+    if (userConsent) {
+        // Prevent navigation
+        window.addEventListener('beforeunload', function(event) {
+            event.preventDefault();
+            event.returnValue = '';
+        });
+
+        // Prevent form submissions
+        document.addEventListener('submit', function(event) {
+            event.preventDefault();
+        }, true);
+
+        // Block pushState and replaceState
+        const origPushState = history.pushState;
+        const origReplaceState = history.replaceState;
+
+        history.pushState = function(state, title, url) {
+            if (confirm(`Allow navigation to "${url}"?`)) {
+                return origPushState.call(this, state, title, url);
+            }
+        };
+
+        history.replaceState = function(state, title, url) {
+            if (confirm(`Allow state change to "${url}"?`)) {
+                return origReplaceState.call(this, state, title, url);
+            }
+        };
+
+        console.log('Page-leaving prevention measures activated.');
+    } else {
+        console.log('Page-leaving prevention measures not activated.');
+    }
+})();
+

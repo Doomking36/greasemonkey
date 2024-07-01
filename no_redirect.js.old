@@ -1,0 +1,81 @@
+// ==UserScript==
+// @name	Stop Redirect and Open in New Tab
+// version	0.1
+// @description	Prevents redirects and opens links in new tabs w/o permission
+// @match	*://*/*
+// @grant	none
+// ==/UserScript==
+
+
+
+
+	// Intercept all click events
+	//document.addEventListener('click', function(e) {
+	//	let target = e.target.closest('a');
+	//	if (target && target.href) {
+	//		e.preventDefault();
+	//		e.stopPropagation();
+
+	//	}
+	//}, true);
+
+
+
+
+(function() {
+	'use strict';
+
+	// Prevent unload events
+	window.addEventListener('beforeunload', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		event.stopImmediatePropagation();
+		event.returnValue = '';
+	});
+
+
+	// Block unload events
+	window.addEventListener('unload', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		event.stopImmediatePropagation();
+		event.returnValue = '';
+	});
+
+
+	// Intercept all click events
+	document.addEventListener('click', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		event.stopImmediatePropagation();
+		return false;
+	}, true);
+
+
+	// Prevent form submissions
+	document.addEventListener('submit', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		event.stopImmediatePropagation();
+		return false;
+	}, true);
+
+
+	// Block popstate events
+	document.addEventListener('popstate', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		event.stopImmediatePropagation();
+		return false;
+	}, true);
+
+
+
+	// Block pushState and replaceState
+	const origPushState = history.pushState;
+	const origReplaceState = history.replaceState;
+
+	history.pushState = function() {};
+	history.replaceState = function() {};
+
+})();
